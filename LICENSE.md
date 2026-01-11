@@ -1,0 +1,21 @@
+This resource is derived from Princeton WordNet under the WordNet License and further developed under the Creative Commons Attribution 4.0 International License.
+
+You may share and adapt this resource providing attribution is given to both Princeton WordNet and the Open English Wordnet team.
+
+# WordNet License Attribution
+
+This work is based on or incorporates elements of the Princeton
+University WordNet database.
+
+The original Princeton WordNet license terms apply to the underlying
+data and can be found in the file: /WNDB_License.txt (located in the
+root directory of this distribution).
+
+
+# Open English WordNet License Attribution
+
+This work is based on or incorporates elements of the Open English WordNet database.
+
+The original Open English WordNet license terms apply to the underlying
+data and can be found in the file: /OEWN_License.txt (located in the
+root directory of this distribution).
