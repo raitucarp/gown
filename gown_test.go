@@ -49,6 +49,17 @@ func TestReadLexicalResource(t *testing.T) {
 			t.Errorf("Expected at least 3 entries, got %d", len(entries))
 		}
 	})
+
+	t.Run("Words", func(t *testing.T) {
+		entries := resource.Words()
+		for _, entry := range entries {
+			if strings.ContainsFunc(
+				entry.Lemma.WrittenForm,
+				containSeparatedCollocation) {
+				t.Errorf("Lemma is not word %s", entry.Lemma.WrittenForm)
+			}
+		}
+	})
 }
 
 func TestNouns(t *testing.T) {
@@ -136,6 +147,28 @@ func TestNouns(t *testing.T) {
 				if synset.Lexfile != string(NounAnimal) {
 					t.Errorf("Not an animal, %s %s", synset.Lexfile, a.Lemma.WrittenForm)
 				}
+			}
+		}
+	})
+
+	t.Run("Random artifact words and collocations", func(t *testing.T) {
+		artifacts := nouns.Animal().Words()
+
+		for _, entry := range artifacts {
+			if strings.ContainsFunc(
+				entry.Lemma.WrittenForm,
+				containSeparatedCollocation) {
+				t.Errorf("Lemma is not word %s", entry.Lemma.WrittenForm)
+			}
+		}
+
+		artifactCollocations := nouns.Animal().Collocations()
+
+		for _, entry := range artifactCollocations {
+			if !strings.ContainsFunc(
+				entry.Lemma.WrittenForm,
+				containSeparatedCollocation) {
+				t.Errorf("Lemma is not collocation %s", entry.Lemma.WrittenForm)
 			}
 		}
 	})

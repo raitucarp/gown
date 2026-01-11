@@ -56,13 +56,13 @@ func (resource *LexicalResource) Nouns() (entries Nouns) {
 	return
 }
 
-func (nouns *Nouns) filteredByLexFile(kind NounKind) (
+func (nouns Nouns) filteredByLexFile(kind NounKind) (
 	filteredNouns Nouns,
 ) {
 
 	nounMap := map[string]*Noun{}
 
-	for _, noun := range *nouns {
+	for _, noun := range nouns {
 		entryId := noun.ID
 		for _, synset := range noun.synsets {
 			if synset.Lexfile == string(kind) {
@@ -85,19 +85,19 @@ func (nouns *Nouns) filteredByLexFile(kind NounKind) (
 	return filteredNouns
 }
 
-func (nouns *Nouns) Tops() Nouns {
+func (nouns Nouns) Tops() Nouns {
 	return nouns.filteredByLexFile(NounTops)
 }
 
-func (nouns *Nouns) Act() Nouns {
+func (nouns Nouns) Act() Nouns {
 	return nouns.filteredByLexFile(NounAct)
 }
 
-func (nouns *Nouns) Animal() Nouns {
+func (nouns Nouns) Animal() Nouns {
 	return nouns.filteredByLexFile(NounAnimal)
 }
 
-func (nouns *Nouns) Artifact() Nouns {
+func (nouns Nouns) Artifact() Nouns {
 	return nouns.filteredByLexFile(NounArtifact)
 }
 
@@ -105,35 +105,35 @@ func (nouns *Nouns) Attribute() Nouns {
 	return nouns.filteredByLexFile(NounAttribute)
 }
 
-func (nouns *Nouns) Body() Nouns {
+func (nouns Nouns) Body() Nouns {
 	return nouns.filteredByLexFile(NounBody)
 }
 
-func (nouns *Nouns) Cognition() Nouns {
+func (nouns Nouns) Cognition() Nouns {
 	return nouns.filteredByLexFile(NounCognition)
 }
 
-func (nouns *Nouns) Communication() Nouns {
+func (nouns Nouns) Communication() Nouns {
 	return nouns.filteredByLexFile(NounCommunication)
 }
 
-func (nouns *Nouns) Event() Nouns {
+func (nouns Nouns) Event() Nouns {
 	return nouns.filteredByLexFile(NounEvent)
 }
 
-func (nouns *Nouns) Feeling() Nouns {
+func (nouns Nouns) Feeling() Nouns {
 	return nouns.filteredByLexFile(NounFeeling)
 }
 
-func (nouns *Nouns) Food() Nouns {
+func (nouns Nouns) Food() Nouns {
 	return nouns.filteredByLexFile(NounFood)
 }
 
-func (nouns *Nouns) Group() Nouns {
+func (nouns Nouns) Group() Nouns {
 	return nouns.filteredByLexFile(NounGroup)
 }
 
-func (nouns *Nouns) Location() Nouns {
+func (nouns Nouns) Location() Nouns {
 	return nouns.filteredByLexFile(NounLocation)
 }
 
@@ -141,50 +141,50 @@ func (nouns *Nouns) Motive() Nouns {
 	return nouns.filteredByLexFile(NounMotive)
 }
 
-func (nouns *Nouns) Object() Nouns {
+func (nouns Nouns) Object() Nouns {
 	return nouns.filteredByLexFile(NounObject)
 }
 
-func (nouns *Nouns) Person() Nouns {
+func (nouns Nouns) Person() Nouns {
 	return nouns.filteredByLexFile(NounPerson)
 }
 
-func (nouns *Nouns) Phenomenon() Nouns {
+func (nouns Nouns) Phenomenon() Nouns {
 	return nouns.filteredByLexFile(NounPhenomenon)
 }
 
-func (nouns *Nouns) Plant() Nouns {
+func (nouns Nouns) Plant() Nouns {
 	return nouns.filteredByLexFile(NounPlant)
 }
 
-func (nouns *Nouns) Possession() Nouns {
+func (nouns Nouns) Possession() Nouns {
 	return nouns.filteredByLexFile(NounPossession)
 }
 
-func (nouns *Nouns) Process() Nouns {
+func (nouns Nouns) Process() Nouns {
 	return nouns.filteredByLexFile(NounProcess)
 }
 
-func (nouns *Nouns) Quantity() Nouns {
+func (nouns Nouns) Quantity() Nouns {
 	return nouns.filteredByLexFile(NounQuantity)
 }
 
-func (nouns *Nouns) Relation() Nouns {
+func (nouns Nouns) Relation() Nouns {
 	return nouns.filteredByLexFile(NounRelation)
 }
 
-func (nouns *Nouns) Shape() Nouns {
+func (nouns Nouns) Shape() Nouns {
 	return nouns.filteredByLexFile(NounShape)
 }
 
-func (nouns *Nouns) State() Nouns {
+func (nouns Nouns) State() Nouns {
 	return nouns.filteredByLexFile(NounState)
 }
 
-func (nouns *Nouns) Substance() Nouns {
+func (nouns Nouns) Substance() Nouns {
 	return nouns.filteredByLexFile(NounSubstance)
 }
 
-func (nouns *Nouns) Time() Nouns {
+func (nouns Nouns) Time() Nouns {
 	return nouns.filteredByLexFile(NounTime)
 }
