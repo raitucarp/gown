@@ -54,3 +54,25 @@ func (nouns Nouns) Collocations() (collocationNouns Nouns) {
 	}
 	return
 }
+
+func (verbs Verbs) Words() (wordVerbs Verbs) {
+	for _, verb := range verbs {
+		if !strings.ContainsFunc(
+			verb.Lemma.WrittenForm,
+			containSeparatedCollocation) {
+			wordVerbs = append(wordVerbs, verb)
+		}
+	}
+	return
+}
+
+func (verbs Verbs) Collocations() (collocationVerbs Verbs) {
+	for _, verb := range verbs {
+		if strings.ContainsFunc(
+			verb.Lemma.WrittenForm,
+			containSeparatedCollocation) {
+			collocationVerbs = append(collocationVerbs, verb)
+		}
+	}
+	return
+}

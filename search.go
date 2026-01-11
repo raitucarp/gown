@@ -52,3 +52,25 @@ func (nouns Nouns) SearchLemmaByDefinition(query string) (entries []Noun) {
 
 	return
 }
+
+func (verbs Verbs) SearchLemma(query string) (entries Verbs) {
+	for _, entry := range verbs {
+		if strings.Contains(entry.Lemma.WrittenForm, query) {
+			entries = append(entries, entry)
+		}
+	}
+
+	return
+}
+
+func (verbs Verbs) SearchLemmaByDefinition(query string) (entries Verbs) {
+	for _, entry := range verbs {
+		for _, definition := range entry.Definitions() {
+			if strings.Contains(definition, query) {
+				entries = append(entries, entry)
+			}
+		}
+	}
+
+	return
+}
