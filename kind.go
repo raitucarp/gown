@@ -44,12 +44,12 @@ func (nouns Nouns) Words() (wordNouns Nouns) {
 	return
 }
 
-func (nouns Nouns) Collocations() (wordNouns Nouns) {
+func (nouns Nouns) Collocations() (collocationNouns Nouns) {
 	for _, noun := range nouns {
 		if strings.ContainsFunc(
 			noun.Lemma.WrittenForm,
 			containSeparatedCollocation) {
-			wordNouns = append(wordNouns, noun)
+			collocationNouns = append(collocationNouns, noun)
 		}
 	}
 	return
