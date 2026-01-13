@@ -1,10 +1,8 @@
 package gown
 
-import "strings"
-
 func (resource LexicalResource) SearchLemma(query string) (entries []LexicalEntry) {
 	for _, entry := range resource.Lexicon.LexicalEntries {
-		if strings.Contains(entry.Lemma.WrittenForm, query) {
+		if entry.Contains(query) {
 			entries = append(entries, entry)
 		}
 	}
@@ -13,18 +11,9 @@ func (resource LexicalResource) SearchLemma(query string) (entries []LexicalEntr
 }
 
 func (resource LexicalResource) SearchLemmaByDefinition(query string) (entries []LexicalEntry) {
-	lexById := resource.LexicalsById()
-	for _, synset := range resource.Lexicon.Synsets {
-		for _, definition := range synset.Definitions {
-			if !strings.Contains(definition, query) {
-				continue
-			}
-
-			for _, member := range synset.Members {
-				if _, ok := lexById[member]; ok {
-					entries = append(entries, lexById[member])
-				}
-			}
+	for _, entry := range resource.Lexicon.LexicalEntries {
+		if entry.HasDefinition(query) {
+			entries = append(entries, entry)
 		}
 	}
 
@@ -33,7 +22,7 @@ func (resource LexicalResource) SearchLemmaByDefinition(query string) (entries [
 
 func (nouns Nouns) SearchLemma(query string) (entries []Noun) {
 	for _, entry := range nouns {
-		if strings.Contains(entry.Lemma.WrittenForm, query) {
+		if entry.Contains(query) {
 			entries = append(entries, entry)
 		}
 	}
@@ -43,10 +32,8 @@ func (nouns Nouns) SearchLemma(query string) (entries []Noun) {
 
 func (nouns Nouns) SearchLemmaByDefinition(query string) (entries []Noun) {
 	for _, entry := range nouns {
-		for _, definition := range entry.Definitions() {
-			if strings.Contains(definition, query) {
-				entries = append(entries, entry)
-			}
+		if entry.HasDefinition(query) {
+			entries = append(entries, entry)
 		}
 	}
 
@@ -55,7 +42,7 @@ func (nouns Nouns) SearchLemmaByDefinition(query string) (entries []Noun) {
 
 func (verbs Verbs) SearchLemma(query string) (entries Verbs) {
 	for _, entry := range verbs {
-		if strings.Contains(entry.Lemma.WrittenForm, query) {
+		if entry.Contains(query) {
 			entries = append(entries, entry)
 		}
 	}
@@ -65,10 +52,28 @@ func (verbs Verbs) SearchLemma(query string) (entries Verbs) {
 
 func (verbs Verbs) SearchLemmaByDefinition(query string) (entries Verbs) {
 	for _, entry := range verbs {
-		for _, definition := range entry.Definitions() {
-			if strings.Contains(definition, query) {
-				entries = append(entries, entry)
-			}
+		if entry.HasDefinition(query) {
+			entries = append(entries, entry)
+		}
+	}
+
+	return
+}
+
+func (adjectives Adjectives) SearchLemma(query string) (entries Adjectives) {
+	for _, entry := range adjectives {
+		if entry.Contains(query) {
+			entries = append(entries, entry)
+		}
+	}
+
+	return
+}
+
+func (adjectives Adjectives) SearchLemmaByDefinition(query string) (entries Adjectives) {
+	for _, entry := range adjectives {
+		if entry.HasDefinition(query) {
+			entries = append(entries, entry)
 		}
 	}
 

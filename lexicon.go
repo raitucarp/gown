@@ -92,6 +92,19 @@ func (entry *LexicalEntry) Examples() (examples []string) {
 	return
 }
 
+func (entry *LexicalEntry) Contains(s string) bool {
+	return strings.Contains(entry.Lemma.WrittenForm, s)
+}
+
+func (entry *LexicalEntry) HasDefinition(s string) bool {
+	for _, definition := range entry.Definitions() {
+		if strings.Contains(definition, s) {
+			return true
+		}
+	}
+	return false
+}
+
 type Example struct {
 	Source string `xml:"source,attr"`
 	Text   string `xml:",chardata"`
