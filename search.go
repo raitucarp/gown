@@ -79,3 +79,23 @@ func (adjectives Adjectives) SearchLemmaByDefinition(query string) (entries Adje
 
 	return
 }
+
+func (adverbs Adverbs) SearchLemma(query string) (entries Adverbs) {
+	for _, entry := range adverbs {
+		if entry.Contains(query) {
+			entries = append(entries, entry)
+		}
+	}
+
+	return
+}
+
+func (adverbs Adverbs) SearchLemmaByDefinition(query string) (entries Adverbs) {
+	for _, entry := range adverbs {
+		if entry.HasDefinition(query) {
+			entries = append(entries, entry)
+		}
+	}
+
+	return
+}
