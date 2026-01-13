@@ -28,14 +28,6 @@ type Verb struct {
 	synsets []Synset
 }
 
-func (v *Verb) setSynsets(synsets []Synset) {
-	v.synsets = synsets
-}
-
-func (v *Verb) getSynsets() []Synset {
-	return v.synsets
-}
-
 type Verbs []Verb
 
 func (resource *LexicalResource) Verbs() (verbs Verbs) {
