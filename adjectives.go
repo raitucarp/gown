@@ -18,7 +18,7 @@ type Adjective struct {
 type Adjectives []Adjective
 
 func (resource *LexicalResource) Adjectives() (adjectives Adjectives) {
-	entries, _ := resource.filterByPos(VerbPos)
+	entries, _ := resource.filterByPos(AdjectivePos)
 
 	for _, entry := range entries {
 		adjective := Adjective{LexicalEntry: &entry}
@@ -30,7 +30,7 @@ func (resource *LexicalResource) Adjectives() (adjectives Adjectives) {
 }
 
 func (adjectives Adjectives) filteredByLexFile(kind AdjectiveKind) (
-	filteredVerbs Adjectives,
+	filteredAdjectives Adjectives,
 ) {
 
 	filteredByLex := lo.Filter(adjectives, func(a Adjective, index int) bool {
