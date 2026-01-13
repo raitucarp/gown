@@ -79,9 +79,14 @@ func TestNouns(t *testing.T) {
 		}
 	}
 
-	for _, animal := range nouns.Animal() {
+	animal := nouns.Animal()
+	if len(animal) <= 0 {
+		t.Fatal("No animals found")
+	}
+
+	for _, animal := range animal {
 		if animal.Lemma.PartOfSpeech != string(NounPos) {
-			t.Fatal("Not anoun")
+			t.Fatal("Not a noun")
 		}
 
 		for _, synset := range animal.synsets {
@@ -93,6 +98,11 @@ func TestNouns(t *testing.T) {
 
 	t.Run("Search animal", func(t *testing.T) {
 		animal := nouns.Animal()
+
+		if len(animal) <= 0 {
+			t.Fatal("No animals found")
+		}
+
 		query := "fly"
 		entries := animal.SearchLemma(query)
 		for _, entry := range entries {

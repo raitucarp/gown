@@ -3,6 +3,8 @@ package gown
 import (
 	"encoding/xml"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 type SyntacticBehaviour struct {
@@ -184,11 +186,27 @@ func (resource *LexicalResource) LexicalsById() map[string]LexicalEntry {
 	return resource.lexicalsById
 }
 
-func (resource *LexicalResource) groupEntryByPos(pos POS) (entries []LexicalEntry) {
-	for _, lexicalEntry := range resource.Lexicon.LexicalEntries {
-		if lexicalEntry.Lemma.PartOfSpeech == string(pos) {
-			entries = append(entries, lexicalEntry)
-		}
-	}
-	return
+func (resource *LexicalResource) groupEntryByPos(pos POS) (
+	entries []LexicalEntry,
+) {
+	return lo.GroupBy(resource.Lexicon.LexicalEntries,
+		func(entry LexicalEntry) string {
+			return entry.Lemma.PartOfSpeech
+		})[string(pos)]
+}
+
+func (resource *LexicalResource) groupSynsetsByPos(pos POS) (
+	entries []Synset,
+) {
+	return lo.GroupBy(resource.Lexicon.Synsets,
+		func(synset Synset) string {
+			return synset.PartOfSpeech
+		})[string(pos)]
+}
+
+func (resource *LexicalResource) synsetsBySense(senses []Sense) []Synset {
+	synsetsById := resource.SynsetsById()
+	return lo.Map(senses, func(sense Sense, i int) Synset {
+		return synsetsById[sense.Synset]
+	})
 }

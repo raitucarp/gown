@@ -1,5 +1,7 @@
 package gown
 
+import "github.com/samber/lo"
+
 type NounKind string
 
 const (
@@ -38,19 +40,13 @@ type Noun struct {
 
 type Nouns []Noun
 
-func (resource *LexicalResource) Nouns() (entries Nouns) {
-	synsetsById := resource.SynsetsById()
-	lexEntries := resource.groupEntryByPos(NounPos)
-	for _, lexicalEntry := range lexEntries {
-		noun := Noun{LexicalEntry: &lexicalEntry}
-		for _, sense := range lexicalEntry.Senses {
-			synset, ok := synsetsById[sense.Synset]
-			if ok {
-				noun.synsets = append(noun.synsets, synset)
-			}
-		}
+func (resource *LexicalResource) Nouns() (nouns Nouns) {
+	entries, _ := resource.filterByPos(NounPos)
 
-		entries = append(entries, noun)
+	for _, entry := range entries {
+		noun := Noun{LexicalEntry: &entry}
+		noun.synsets = resource.synsetsBySense(noun.Senses)
+		nouns = append(nouns, noun)
 	}
 
 	return
@@ -59,30 +55,15 @@ func (resource *LexicalResource) Nouns() (entries Nouns) {
 func (nouns Nouns) filteredByLexFile(kind NounKind) (
 	filteredNouns Nouns,
 ) {
+	filteredByLex := lo.Filter(nouns, func(n Noun, index int) bool {
+		return lo.SomeBy(n.synsets, synsetByLexFile(string(kind)))
+	})
 
-	nounMap := map[string]*Noun{}
-
-	for _, noun := range nouns {
-		entryId := noun.ID
-		for _, synset := range noun.synsets {
-			if synset.Lexfile == string(kind) {
-				if _, ok := nounMap[entryId]; !ok {
-					newNoun := noun
-					newNoun.synsets = []Synset{}
-					nounMap[entryId] = &newNoun
-				}
-
-				nounMap[entryId].synsets =
-					append(nounMap[entryId].synsets, synset)
-			}
-		}
-	}
-
-	for _, noun := range nounMap {
-		filteredNouns = append(filteredNouns, *noun)
-	}
-
-	return filteredNouns
+	onlyByLex := lo.Map(filteredByLex, func(n Noun, index int) Noun {
+		n.synsets = synsetsByLexFile(n.synsets, string(kind))
+		return n
+	})
+	return onlyByLex
 }
 
 func (nouns Nouns) Tops() Nouns {

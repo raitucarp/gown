@@ -1,5 +1,7 @@
 package gown
 
+import "github.com/samber/lo"
+
 type VerbKind string
 
 const (
@@ -22,27 +24,27 @@ const (
 
 type Verb struct {
 	*LexicalEntry
+
 	synsets []Synset
+}
+
+func (v *Verb) setSynsets(synsets []Synset) {
+	v.synsets = synsets
+}
+
+func (v *Verb) getSynsets() []Synset {
+	return v.synsets
 }
 
 type Verbs []Verb
 
-// Verbs returns list of Verbs
-//
-// TODO(raitucarp): need dry solution
-func (resource *LexicalResource) Verbs() (entries Verbs) {
-	synsetsById := resource.SynsetsById()
-	lexEntries := resource.groupEntryByPos(VerbPos)
-	for _, lexicalEntry := range lexEntries {
-		verb := Verb{LexicalEntry: &lexicalEntry}
-		for _, sense := range lexicalEntry.Senses {
-			synset, ok := synsetsById[sense.Synset]
-			if ok {
-				verb.synsets = append(verb.synsets, synset)
-			}
-		}
+func (resource *LexicalResource) Verbs() (verbs Verbs) {
+	entries, _ := resource.filterByPos(VerbPos)
 
-		entries = append(entries, verb)
+	for _, entry := range entries {
+		verb := Verb{LexicalEntry: &entry}
+		verb.synsets = resource.synsetsBySense(verb.Senses)
+		verbs = append(verbs, verb)
 	}
 
 	return
@@ -52,29 +54,16 @@ func (verbs Verbs) filteredByLexFile(kind VerbKind) (
 	filteredVerbs Verbs,
 ) {
 
-	verbMap := map[string]*Verb{}
+	filteredByLex := lo.Filter(verbs, func(v Verb, index int) bool {
+		return lo.SomeBy(v.synsets, synsetByLexFile(string(kind)))
+	})
 
-	for _, verb := range verbs {
-		entryId := verb.ID
-		for _, synset := range verb.synsets {
-			if synset.Lexfile == string(kind) {
-				if _, ok := verbMap[entryId]; !ok {
-					newVerb := verb
-					newVerb.synsets = []Synset{}
-					verbMap[entryId] = &newVerb
-				}
+	onlyByLex := lo.Map(filteredByLex, func(v Verb, index int) Verb {
+		v.synsets = synsetsByLexFile(v.synsets, string(kind))
+		return v
+	})
 
-				verbMap[entryId].synsets =
-					append(verbMap[entryId].synsets, synset)
-			}
-		}
-	}
-
-	for _, noun := range verbMap {
-		filteredVerbs = append(filteredVerbs, *noun)
-	}
-
-	return filteredVerbs
+	return onlyByLex
 }
 
 func (verbs Verbs) Body() Verbs {
