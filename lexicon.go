@@ -61,50 +61,6 @@ func (sense *Sense) Examples() (examples []string) {
 	return
 }
 
-type LexicalEntry struct {
-	ID     string  `xml:"id,attr"`
-	Forms  []Form  `xml:"Form"`
-	Lemma  Lemma   `xml:"Lemma"`
-	Senses []Sense `xml:"Sense"`
-
-	resource *LexicalResource
-}
-
-func (entry *LexicalEntry) Definitions() (definitions []string) {
-	synsetsById := entry.resource.SynsetsById()
-	for _, sense := range entry.Senses {
-		if _, ok := synsetsById[sense.Synset]; ok {
-			definitions = append(definitions, synsetsById[sense.Synset].Definitions...)
-		}
-	}
-	return
-}
-
-func (entry *LexicalEntry) Examples() (examples []string) {
-	synsetsById := entry.resource.SynsetsById()
-	for _, sense := range entry.Senses {
-		if _, ok := synsetsById[sense.Synset]; ok {
-			for _, example := range synsetsById[sense.Synset].Examples {
-				examples = append(examples, example.Text)
-			}
-		}
-	}
-	return
-}
-
-func (entry *LexicalEntry) Contains(s string) bool {
-	return strings.Contains(entry.Lemma.WrittenForm, s)
-}
-
-func (entry *LexicalEntry) HasDefinition(s string) bool {
-	for _, definition := range entry.Definitions() {
-		if strings.Contains(definition, s) {
-			return true
-		}
-	}
-	return false
-}
-
 type Example struct {
 	Source string `xml:"source,attr"`
 	Text   string `xml:",chardata"`
