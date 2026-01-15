@@ -33,34 +33,6 @@ type SenseRelation struct {
 	Type    string `xml:"type,attr"`
 }
 
-type Sense struct {
-	Adjposition    string          `xml:"adjposition,attr"`
-	ID             string          `xml:"id,attr"`
-	Subcat         string          `xml:"subcat,attr"`
-	Synset         string          `xml:"synset,attr"`
-	SenseRelations []SenseRelation `xml:"SenseRelation"`
-
-	resource *LexicalResource
-}
-
-func (sense *Sense) Definitions() (definitions []string) {
-	synsetsById := sense.resource.SynsetsById()
-	if _, ok := synsetsById[sense.Synset]; ok {
-		definitions = append(definitions, synsetsById[sense.Synset].Definitions...)
-	}
-	return
-}
-
-func (sense *Sense) Examples() (examples []string) {
-	synsetsById := sense.resource.SynsetsById()
-	if _, ok := synsetsById[sense.Synset]; ok {
-		for _, example := range synsetsById[sense.Synset].Examples {
-			examples = append(examples, example.Text)
-		}
-	}
-	return
-}
-
 type Example struct {
 	Source string `xml:"source,attr"`
 	Text   string `xml:",chardata"`
@@ -116,8 +88,8 @@ type Lexicon struct {
 type LexicalResource struct {
 	Lexicon Lexicon `xml:"Lexicon"`
 
-	synsetsById  map[string]Synset
-	lexicalsById map[string]LexicalEntry
+	synsetsById  map[string]*Synset
+	lexicalsById map[string]*LexicalEntry
 }
 
 type POS string
@@ -130,26 +102,26 @@ const (
 	AdjectiveSattelitePos POS = "s"
 )
 
-func (resource *LexicalResource) SynsetsById() map[string]Synset {
+func (resource *LexicalResource) SynsetsById() map[string]*Synset {
 	if len(resource.synsetsById) > 0 {
 		return resource.synsetsById
 	}
 
-	resource.synsetsById = make(map[string]Synset)
+	resource.synsetsById = make(map[string]*Synset)
 	for _, synset := range resource.Lexicon.Synsets {
-		resource.synsetsById[synset.ID] = synset
+		resource.synsetsById[synset.ID] = &synset
 	}
 	return resource.synsetsById
 }
 
-func (resource *LexicalResource) LexicalsById() map[string]LexicalEntry {
+func (resource *LexicalResource) LexicalsById() map[string]*LexicalEntry {
 	if len(resource.lexicalsById) > 0 {
 		return resource.lexicalsById
 	}
 
-	resource.lexicalsById = make(map[string]LexicalEntry)
+	resource.lexicalsById = make(map[string]*LexicalEntry)
 	for _, lexicalEntry := range resource.Lexicon.LexicalEntries {
-		resource.lexicalsById[lexicalEntry.ID] = lexicalEntry
+		resource.lexicalsById[lexicalEntry.ID] = &lexicalEntry
 	}
 
 	return resource.lexicalsById
@@ -173,9 +145,9 @@ func (resource *LexicalResource) groupSynsetsByPos(pos POS) (
 		})[string(pos)]
 }
 
-func (resource *LexicalResource) synsetsBySense(senses []Sense) []Synset {
+func (resource *LexicalResource) synsetsBySense(senses []Sense) []*Synset {
 	synsetsById := resource.SynsetsById()
-	return lo.Map(senses, func(sense Sense, i int) Synset {
+	return lo.Map(senses, func(sense Sense, i int) *Synset {
 		return synsetsById[sense.Synset]
 	})
 }
