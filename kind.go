@@ -11,22 +11,18 @@ func containSeparatedCollocation(r rune) bool {
 	return slices.Contains(collocationSeparator, r)
 }
 
-func (resource LexicalResource) Words() (entries []LexicalEntry) {
+func (resource LexicalResource) Words() (entries LexicalEntries) {
 	for _, entry := range resource.Lexicon.LexicalEntries {
-		if !strings.ContainsFunc(
-			entry.Lemma.WrittenForm,
-			containSeparatedCollocation) {
+		if entry.IsWord() {
 			entries = append(entries, entry)
 		}
 	}
 	return
 }
 
-func (resource LexicalResource) Collocations() (entries []LexicalEntry) {
+func (resource LexicalResource) Collocations() (entries LexicalEntries) {
 	for _, entry := range resource.Lexicon.LexicalEntries {
-		if strings.ContainsFunc(
-			entry.Lemma.WrittenForm,
-			containSeparatedCollocation) {
+		if entry.IsCollocation() {
 			entries = append(entries, entry)
 		}
 	}
@@ -35,9 +31,7 @@ func (resource LexicalResource) Collocations() (entries []LexicalEntry) {
 
 func (nouns Nouns) Words() (wordNouns Nouns) {
 	for _, noun := range nouns {
-		if !strings.ContainsFunc(
-			noun.Lemma.WrittenForm,
-			containSeparatedCollocation) {
+		if noun.IsWord() {
 			wordNouns = append(wordNouns, noun)
 		}
 	}
