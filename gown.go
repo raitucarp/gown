@@ -38,7 +38,7 @@ func registerTypes() {
 	gob.Register([]SyntacticBehaviour{})
 }
 
-func ReadLexicalResource() (resource LexicalResource, err error) {
+func ReadLexicalResource() (resource *LexicalResource, err error) {
 	oewnReader := bytes.NewReader(oewn)
 
 	gzipReader, err := gzip.NewReader(oewnReader)
@@ -57,11 +57,17 @@ func ReadLexicalResource() (resource LexicalResource, err error) {
 	}
 
 	for index := range resource.Lexicon.LexicalEntries {
-		resource.Lexicon.LexicalEntries[index].resource = &resource
+		resource.Lexicon.LexicalEntries[index].resource = resource
 		for senseIndex := range resource.Lexicon.LexicalEntries[index].Senses {
 			resource.Lexicon.
 				LexicalEntries[index].
-				Senses[senseIndex].resource = &resource
+				Senses[senseIndex].resource = resource
+
+			resource.Lexicon.
+				LexicalEntries[index].
+				Senses[senseIndex].lexicalEntry = &resource.Lexicon.
+				LexicalEntries[index]
+
 		}
 	}
 
