@@ -7,7 +7,8 @@ type Sense struct {
 	Synset         string          `xml:"synset,attr"`
 	SenseRelations []SenseRelation `xml:"SenseRelation"`
 
-	resource *LexicalResource
+	resource     *LexicalResource
+	lexicalEntry *LexicalEntry
 }
 
 func (sense *Sense) GetSynset() *Synset {
