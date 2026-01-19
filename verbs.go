@@ -1,7 +1,5 @@
 package gown
 
-import "github.com/samber/lo"
-
 type VerbKind string
 
 const (
@@ -22,22 +20,12 @@ const (
 	VerbWeather       VerbKind = "verb.weather"
 )
 
-type Verb struct {
-	*LexicalEntry
-
-	synsets []Synset
-}
-
-type Verbs []Verb
+type Verb LexicalEntry
+type Verbs LexicalEntries
 
 func (resource *LexicalResource) Verbs() (verbs Verbs) {
-	entries, _ := resource.filterByPos(VerbPos)
-
-	for _, entry := range entries {
-		verb := Verb{LexicalEntry: &entry}
-		verb.synsets = resource.synsetsBySense(verb.Senses)
-		verbs = append(verbs, verb)
-	}
+	lexicalEntries, _ := resource.filterByPos(NounPos)
+	verbs = Verbs(lexicalEntries)
 
 	return
 }
@@ -45,17 +33,9 @@ func (resource *LexicalResource) Verbs() (verbs Verbs) {
 func (verbs Verbs) filteredByLexFile(kind VerbKind) (
 	filteredVerbs Verbs,
 ) {
-
-	filteredByLex := lo.Filter(verbs, func(v Verb, index int) bool {
-		return lo.SomeBy(v.synsets, synsetByLexFile(string(kind)))
-	})
-
-	onlyByLex := lo.Map(filteredByLex, func(v Verb, index int) Verb {
-		v.synsets = synsetsByLexFile(v.synsets, string(kind))
-		return v
-	})
-
-	return onlyByLex
+	lexicalEntries := verbs.filteredByLexFile(kind)
+	filteredVerbs = Verbs(lexicalEntries)
+	return
 }
 
 func (verbs Verbs) Body() Verbs {

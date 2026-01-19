@@ -1,46 +1,27 @@
 package gown
 
-import "github.com/samber/lo"
-
 type AdverbKind string
 
 const (
 	AdverbAll AdverbKind = "adv.all"
 )
 
-type Adverb struct {
-	*LexicalEntry
-	synsets []Synset
-}
-
-type Adverbs []Adverb
+type Adverb LexicalEntry
+type Adverbs LexicalEntries
 
 func (resource *LexicalResource) Adverbs() (adverbs Adverbs) {
-	entries, _ := resource.filterByPos(VerbPos)
-
-	for _, entry := range entries {
-		adverb := Adverb{LexicalEntry: &entry}
-		adverb.synsets = resource.synsetsBySense(adverb.Senses)
-		adverbs = append(adverbs, adverb)
-	}
+	lexicalEntries, _ := resource.filterByPos(NounPos)
+	adverbs = Adverbs(lexicalEntries)
 
 	return
 }
 
 func (adverbs Adverbs) filteredByLexFile(kind AdverbKind) (
-	filteredVerbs Adverbs,
+	filteredAdverbs Adverbs,
 ) {
-
-	filteredByLex := lo.Filter(adverbs, func(r Adverb, index int) bool {
-		return lo.SomeBy(r.synsets, synsetByLexFile(string(kind)))
-	})
-
-	onlyByLex := lo.Map(filteredByLex, func(r Adverb, index int) Adverb {
-		r.synsets = synsetsByLexFile(r.synsets, string(kind))
-		return r
-	})
-
-	return onlyByLex
+	lexicalEntries := adverbs.filteredByLexFile(kind)
+	filteredAdverbs = Adverbs(lexicalEntries)
+	return
 }
 
 func (adverbs Adverbs) All() Adverbs {

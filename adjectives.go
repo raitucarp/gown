@@ -1,7 +1,5 @@
 package gown
 
-import "github.com/samber/lo"
-
 type AdjectiveKind string
 
 const (
@@ -10,21 +8,12 @@ const (
 	AdjectiveParticiple AdjectiveKind = "adj.ppl"
 )
 
-type Adjective struct {
-	*LexicalEntry
-	synsets []Synset
-}
-
-type Adjectives []Adjective
+type Adjective LexicalEntry
+type Adjectives LexicalEntries
 
 func (resource *LexicalResource) Adjectives() (adjectives Adjectives) {
-	entries, _ := resource.filterByPos(AdjectivePos)
-
-	for _, entry := range entries {
-		adjective := Adjective{LexicalEntry: &entry}
-		adjective.synsets = resource.synsetsBySense(adjective.Senses)
-		adjectives = append(adjectives, adjective)
-	}
+	lexicalEntries, _ := resource.filterByPos(NounPos)
+	adjectives = Adjectives(lexicalEntries)
 
 	return
 }
@@ -32,17 +21,9 @@ func (resource *LexicalResource) Adjectives() (adjectives Adjectives) {
 func (adjectives Adjectives) filteredByLexFile(kind AdjectiveKind) (
 	filteredAdjectives Adjectives,
 ) {
-
-	filteredByLex := lo.Filter(adjectives, func(a Adjective, index int) bool {
-		return lo.SomeBy(a.synsets, synsetByLexFile(string(kind)))
-	})
-
-	onlyByLex := lo.Map(filteredByLex, func(a Adjective, index int) Adjective {
-		a.synsets = synsetsByLexFile(a.synsets, string(kind))
-		return a
-	})
-
-	return onlyByLex
+	lexicalEntries := adjectives.filteredByLexFile(kind)
+	filteredAdjectives = Adjectives(lexicalEntries)
+	return
 }
 
 func (adjectives Adjectives) All() Adjectives {

@@ -1,7 +1,5 @@
 package gown
 
-import "github.com/samber/lo"
-
 type NounKind string
 
 const (
@@ -33,139 +31,170 @@ const (
 	NounTime          NounKind = "noun.time"
 )
 
-type Noun struct {
-	*LexicalEntry
-	synsets []Synset
-}
-
-type Nouns []Noun
+type Noun LexicalEntry
+type Nouns LexicalEntries
 
 func (resource *LexicalResource) Nouns() (nouns Nouns) {
-	entries, _ := resource.filterByPos(NounPos)
+	entries := Nouns(
+		LexicalEntries(resource.Lexicon.LexicalEntries).
+			filterByPos(NounPos),
+	)
 
-	for _, entry := range entries {
-		noun := Noun{LexicalEntry: &entry}
-		noun.synsets = resource.synsetsBySense(noun.Senses)
-		nouns = append(nouns, noun)
-	}
+	return entries
+}
 
+func (nouns Nouns) filterByLexFile(kind NounKind) (
+	filteredNouns Nouns,
+) {
+	lexicalEntries := nouns.LexicalEntries().
+		filterByLexFile(string(kind))
+	filteredNouns = Nouns(lexicalEntries)
 	return
 }
 
-func (nouns Nouns) filteredByLexFile(kind NounKind) (
-	filteredNouns Nouns,
-) {
-	filteredByLex := lo.Filter(nouns, func(n Noun, index int) bool {
-		return lo.SomeBy(n.synsets, synsetByLexFile(string(kind)))
-	})
+func (nouns Nouns) LexicalEntries() LexicalEntries {
+	return LexicalEntries(nouns)
+}
 
-	onlyByLex := lo.Map(filteredByLex, func(n Noun, index int) Noun {
-		n.synsets = synsetsByLexFile(n.synsets, string(kind))
-		return n
-	})
-	return onlyByLex
+func (noun Noun) LexicalEntry() LexicalEntry {
+	return LexicalEntry(noun)
+}
+
+func (noun Noun) String() string {
+	return noun.Lemma.WrittenForm
+}
+
+func (nouns Nouns) AllKind() map[NounKind]Nouns {
+	return map[NounKind]Nouns{
+		NounTops:          nouns.Tops(),
+		NounAct:           nouns.Act(),
+		NounAnimal:        nouns.Animal(),
+		NounArtifact:      nouns.Artifact(),
+		NounAttribute:     nouns.Attribute(),
+		NounBody:          nouns.Body(),
+		NounCognition:     nouns.Cognition(),
+		NounCommunication: nouns.Communication(),
+		NounEvent:         nouns.Event(),
+		NounFeeling:       nouns.Feeling(),
+		NounFood:          nouns.Food(),
+		NounGroup:         nouns.Group(),
+		NounLocation:      nouns.Location(),
+		NounMotive:        nouns.Motive(),
+		NounObject:        nouns.Object(),
+		NounPerson:        nouns.Person(),
+		NounPhenomenon:    nouns.Phenomenon(),
+		NounPlant:         nouns.Plant(),
+		NounPossession:    nouns.Possession(),
+		NounProcess:       nouns.Process(),
+		NounQuantity:      nouns.Quantity(),
+		NounRelation:      nouns.Relation(),
+		NounShape:         nouns.Shape(),
+		NounState:         nouns.State(),
+		NounSubstance:     nouns.Substance(),
+		NounTime:          nouns.Time(),
+	}
 }
 
 func (nouns Nouns) Tops() Nouns {
-	return nouns.filteredByLexFile(NounTops)
+	return nouns.filterByLexFile(NounTops)
 }
 
 func (nouns Nouns) Act() Nouns {
-	return nouns.filteredByLexFile(NounAct)
+	return nouns.filterByLexFile(NounAct)
 }
 
 func (nouns Nouns) Animal() Nouns {
-	return nouns.filteredByLexFile(NounAnimal)
+	return nouns.filterByLexFile(NounAnimal)
 }
 
 func (nouns Nouns) Artifact() Nouns {
-	return nouns.filteredByLexFile(NounArtifact)
+	return nouns.filterByLexFile(NounArtifact)
 }
 
-func (nouns *Nouns) Attribute() Nouns {
-	return nouns.filteredByLexFile(NounAttribute)
+func (nouns Nouns) Attribute() Nouns {
+	return nouns.filterByLexFile(NounAttribute)
 }
 
 func (nouns Nouns) Body() Nouns {
-	return nouns.filteredByLexFile(NounBody)
+	return nouns.filterByLexFile(NounBody)
 }
 
 func (nouns Nouns) Cognition() Nouns {
-	return nouns.filteredByLexFile(NounCognition)
+	return nouns.filterByLexFile(NounCognition)
 }
 
 func (nouns Nouns) Communication() Nouns {
-	return nouns.filteredByLexFile(NounCommunication)
+	return nouns.filterByLexFile(NounCommunication)
 }
 
 func (nouns Nouns) Event() Nouns {
-	return nouns.filteredByLexFile(NounEvent)
+	return nouns.filterByLexFile(NounEvent)
 }
 
 func (nouns Nouns) Feeling() Nouns {
-	return nouns.filteredByLexFile(NounFeeling)
+	return nouns.filterByLexFile(NounFeeling)
 }
 
 func (nouns Nouns) Food() Nouns {
-	return nouns.filteredByLexFile(NounFood)
+	return nouns.filterByLexFile(NounFood)
 }
 
 func (nouns Nouns) Group() Nouns {
-	return nouns.filteredByLexFile(NounGroup)
+	return nouns.filterByLexFile(NounGroup)
 }
 
 func (nouns Nouns) Location() Nouns {
-	return nouns.filteredByLexFile(NounLocation)
+	return nouns.filterByLexFile(NounLocation)
 }
 
 func (nouns *Nouns) Motive() Nouns {
-	return nouns.filteredByLexFile(NounMotive)
+	return nouns.filterByLexFile(NounMotive)
 }
 
 func (nouns Nouns) Object() Nouns {
-	return nouns.filteredByLexFile(NounObject)
+	return nouns.filterByLexFile(NounObject)
 }
 
 func (nouns Nouns) Person() Nouns {
-	return nouns.filteredByLexFile(NounPerson)
+	return nouns.filterByLexFile(NounPerson)
 }
 
 func (nouns Nouns) Phenomenon() Nouns {
-	return nouns.filteredByLexFile(NounPhenomenon)
+	return nouns.filterByLexFile(NounPhenomenon)
 }
 
 func (nouns Nouns) Plant() Nouns {
-	return nouns.filteredByLexFile(NounPlant)
+	return nouns.filterByLexFile(NounPlant)
 }
 
 func (nouns Nouns) Possession() Nouns {
-	return nouns.filteredByLexFile(NounPossession)
+	return nouns.filterByLexFile(NounPossession)
 }
 
 func (nouns Nouns) Process() Nouns {
-	return nouns.filteredByLexFile(NounProcess)
+	return nouns.filterByLexFile(NounProcess)
 }
 
 func (nouns Nouns) Quantity() Nouns {
-	return nouns.filteredByLexFile(NounQuantity)
+	return nouns.filterByLexFile(NounQuantity)
 }
 
 func (nouns Nouns) Relation() Nouns {
-	return nouns.filteredByLexFile(NounRelation)
+	return nouns.filterByLexFile(NounRelation)
 }
 
 func (nouns Nouns) Shape() Nouns {
-	return nouns.filteredByLexFile(NounShape)
+	return nouns.filterByLexFile(NounShape)
 }
 
 func (nouns Nouns) State() Nouns {
-	return nouns.filteredByLexFile(NounState)
+	return nouns.filterByLexFile(NounState)
 }
 
 func (nouns Nouns) Substance() Nouns {
-	return nouns.filteredByLexFile(NounSubstance)
+	return nouns.filterByLexFile(NounSubstance)
 }
 
 func (nouns Nouns) Time() Nouns {
-	return nouns.filteredByLexFile(NounTime)
+	return nouns.filterByLexFile(NounTime)
 }
