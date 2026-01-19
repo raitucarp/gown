@@ -4,8 +4,13 @@ import (
 	"github.com/samber/lo"
 )
 
-func (resource *LexicalResource) RandomLemma(n int) []LexicalEntry {
+func (resource LexicalResource) RandomLemma(n int) LexicalEntries {
 	shuffled := lo.Samples(resource.Lexicon.LexicalEntries, n)
+	return shuffled
+}
+
+func (entries LexicalEntries) Random(n int) LexicalEntries {
+	shuffled := lo.Samples(entries, n)
 	return shuffled
 }
 
