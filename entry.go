@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+type Lemma struct {
+	PartOfSpeech   string          `xml:"partOfSpeech,attr"`
+	WrittenForm    string          `xml:"writtenForm,attr"`
+	Pronunciations []Pronunciation `xml:"Pronunciation"`
+}
+
 type LexicalEntry struct {
 	ID     string  `xml:"id,attr"`
 	Forms  []Form  `xml:"Form"`
@@ -16,19 +22,10 @@ type LexicalEntry struct {
 
 type LexicalEntries []LexicalEntry
 
-func (entries LexicalEntries) filterByPos(pos POS) (filteredEntries LexicalEntries) {
+func (entries LexicalEntries) filterByPos(pos ...POS) (filteredEntries LexicalEntries) {
 	for _, entry := range entries {
-		if entry.Lemma.PartOfSpeech == string(pos) {
-			filteredEntries = append(filteredEntries, entry)
-		}
-	}
-	return
-}
-
-func (entries LexicalEntries) filterByLexFile(lexFile string) (filteredEntries LexicalEntries) {
-	for _, entry := range entries {
-		for _, sense := range entry.Senses {
-			if sense.GetSynset().Lexfile == lexFile {
+		for _, _pos := range pos {
+			if entry.PartOfSpeech() == _pos {
 				filteredEntries = append(filteredEntries, entry)
 			}
 		}
@@ -36,14 +33,111 @@ func (entries LexicalEntries) filterByLexFile(lexFile string) (filteredEntries L
 	return
 }
 
-func (resource *LexicalResource) filterSynsetsByLexFile(lexFile string) (synsets []Synset) {
-	for _, synset := range resource.Lexicon.Synsets {
-		if synset.Lexfile == lexFile {
-			synsets = append(synsets, synset)
+func (entries LexicalEntries) filterByLexFile(lexFile string) (filteredEntries LexicalEntries) {
+	for _, entry := range entries {
+		if slices.ContainsFunc(entry.Synsets(),
+			func(s *Synset) bool { return s.Lexfile == lexFile }) {
+			filteredEntries = append(filteredEntries, entry)
+		}
+	}
+	return
+}
+
+func (entries LexicalEntries) Nouns() Nouns {
+	lexicalEntries := entries.filterByPos(NounPos)
+	return Nouns(lexicalEntries)
+}
+
+func (entries LexicalEntries) Verbs() Verbs {
+	lexicalEntries := entries.filterByPos(VerbPos)
+	return Verbs(lexicalEntries)
+}
+
+func (entries LexicalEntries) Adjectives() Adjectives {
+	lexicalEntries := entries.filterByPos(AdjectivePos, AdjectiveSatellitePos)
+	return Adjectives(lexicalEntries)
+}
+
+func (entries LexicalEntries) Adverbs() Adverbs {
+	lexicalEntries := entries.filterByPos(AdverbPos)
+	return Adverbs(lexicalEntries)
+}
+
+func (entry *LexicalEntry) PartOfSpeech() POS {
+	return POS(entry.Lemma.PartOfSpeech)
+}
+
+func (entry *LexicalEntry) String() string {
+	return entry.Lemma.WrittenForm
+}
+
+func (entry *LexicalEntry) Synsets() (synsets []*Synset) {
+	for _, sense := range entry.Senses {
+		synsets = append(synsets, sense.GetSynset())
+	}
+	return
+}
+
+func (entry *LexicalEntry) filterBySenseRelationType(relType SenseRelationKind) (filteredEntries LexicalEntries) {
+
+	senseById := entry.resource.SenseById()
+
+	for _, sense := range entry.Senses {
+		for _, senseRel := range sense.SenseRelations {
+			if senseRel.RelType == string(relType) {
+				targetSense := senseById[senseRel.Target]
+
+				filteredEntries = append(filteredEntries, *targetSense.lexicalEntry)
+
+			}
 		}
 	}
 
 	return
+}
+
+func (entry *LexicalEntry) filterBySenseDublinCoreType(dcType DublinCoreRelType) (filteredEntries LexicalEntries) {
+
+	senseById := entry.resource.SenseById()
+
+	for _, sense := range entry.Senses {
+		for _, senseRel := range sense.SenseRelations {
+			if senseRel.Type == string(dcType) {
+				targetSense := senseById[senseRel.Target]
+
+				filteredEntries = append(filteredEntries, *targetSense.lexicalEntry)
+
+			}
+		}
+	}
+
+	return
+}
+
+func (entry *LexicalEntry) filterBySynsetRelation(relTyppe SynsetRelationType) (filteredEntries LexicalEntries) {
+	synsetsById := entry.resource.SynsetsById()
+	lexicalsById := entry.resource.LexicalsById()
+
+	for _, synset := range entry.Synsets() {
+		for _, synsetRel := range synset.SynsetRelations {
+			if synsetRel.RelType == string(relTyppe) {
+				targetSynset := synsetsById[synsetRel.Target]
+				for _, member := range targetSynset.Members {
+					if lexEntry, ok := lexicalsById[member]; ok {
+						filteredEntries = append(filteredEntries, *lexEntry)
+					}
+				}
+
+			}
+
+		}
+	}
+
+	return
+}
+
+func (entry *LexicalEntry) Relation() *LexicalRelation {
+	return &LexicalRelation{entry: entry}
 }
 
 func (entry *LexicalEntry) StartsWith(s string) bool {
@@ -93,6 +187,15 @@ func (entry *LexicalEntry) CVPatterns() (patterns []string) {
 	}
 
 	return
+}
+
+func (entry *LexicalEntry) HasCVPattern(pattern string) bool {
+	for _, p := range entry.CVPatterns() {
+		if p == pattern {
+			return true
+		}
+	}
+	return false
 }
 
 func (entry *LexicalEntry) Definitions() (definitions []string) {
