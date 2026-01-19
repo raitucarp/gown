@@ -1,9 +1,25 @@
 package gown
 
 func (resource LexicalResource) SearchLemma(query string) (entries []LexicalEntry) {
-	for _, entry := range resource.Lexicon.LexicalEntries {
+	lexicalEntries := LexicalEntries(resource.Lexicon.LexicalEntries)
+
+	return lexicalEntries.SearchLemma(query)
+}
+
+func (entries LexicalEntries) SearchLemma(query string) (filteredEntries []LexicalEntry) {
+	for _, entry := range entries {
 		if entry.Contains(query) {
-			entries = append(entries, entry)
+			filteredEntries = append(filteredEntries, entry)
+		}
+	}
+
+	return
+}
+
+func (entries LexicalEntries) SearchLemmaByDefinition(query string) (filteredEntries []LexicalEntry) {
+	for _, entry := range entries {
+		if entry.HasDefinition(query) {
+			filteredEntries = append(filteredEntries, entry)
 		}
 	}
 
@@ -11,91 +27,19 @@ func (resource LexicalResource) SearchLemma(query string) (entries []LexicalEntr
 }
 
 func (resource LexicalResource) SearchLemmaByDefinition(query string) (entries []LexicalEntry) {
-	for _, entry := range resource.Lexicon.LexicalEntries {
-		if entry.HasDefinition(query) {
-			entries = append(entries, entry)
-		}
-	}
+	lexicalEntries := LexicalEntries(resource.Lexicon.LexicalEntries)
 
-	return
+	return lexicalEntries.SearchLemmaByDefinition(query)
 }
 
-func (nouns Nouns) SearchLemma(query string) (entries []Noun) {
-	for _, entry := range nouns {
-		if entry.Contains(query) {
-			entries = append(entries, entry)
-		}
-	}
+func (nouns Nouns) SearchLemma(query string) (filteredNouns Nouns) {
+	lexicalEntries := LexicalEntries(nouns)
 
-	return
+	return Nouns(lexicalEntries.SearchLemma(query))
 }
 
-func (nouns Nouns) SearchLemmaByDefinition(query string) (entries []Noun) {
-	for _, entry := range nouns {
-		if entry.HasDefinition(query) {
-			entries = append(entries, entry)
-		}
-	}
+func (nouns Nouns) SearchLemmaByDefinition(query string) (filteredNouns Nouns) {
+	lexicalEntries := LexicalEntries(nouns)
 
-	return
-}
-
-func (verbs Verbs) SearchLemma(query string) (entries Verbs) {
-	for _, entry := range verbs {
-		if entry.Contains(query) {
-			entries = append(entries, entry)
-		}
-	}
-
-	return
-}
-
-func (verbs Verbs) SearchLemmaByDefinition(query string) (entries Verbs) {
-	for _, entry := range verbs {
-		if entry.HasDefinition(query) {
-			entries = append(entries, entry)
-		}
-	}
-
-	return
-}
-
-func (adjectives Adjectives) SearchLemma(query string) (entries Adjectives) {
-	for _, entry := range adjectives {
-		if entry.Contains(query) {
-			entries = append(entries, entry)
-		}
-	}
-
-	return
-}
-
-func (adjectives Adjectives) SearchLemmaByDefinition(query string) (entries Adjectives) {
-	for _, entry := range adjectives {
-		if entry.HasDefinition(query) {
-			entries = append(entries, entry)
-		}
-	}
-
-	return
-}
-
-func (adverbs Adverbs) SearchLemma(query string) (entries Adverbs) {
-	for _, entry := range adverbs {
-		if entry.Contains(query) {
-			entries = append(entries, entry)
-		}
-	}
-
-	return
-}
-
-func (adverbs Adverbs) SearchLemmaByDefinition(query string) (entries Adverbs) {
-	for _, entry := range adverbs {
-		if entry.HasDefinition(query) {
-			entries = append(entries, entry)
-		}
-	}
-
-	return
+	return Nouns(lexicalEntries.SearchLemmaByDefinition(query))
 }
