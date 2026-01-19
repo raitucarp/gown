@@ -21,12 +21,6 @@ type Pronunciation struct {
 	Text    string `xml:",chardata"`
 }
 
-type Lemma struct {
-	PartOfSpeech   string          `xml:"partOfSpeech,attr"`
-	WrittenForm    string          `xml:"writtenForm,attr"`
-	Pronunciations []Pronunciation `xml:"Pronunciation"`
-}
-
 type SenseRelation struct {
 	RelType string `xml:"relType,attr"`
 	Target  string `xml:"target,attr"`
@@ -90,6 +84,7 @@ type LexicalResource struct {
 
 	synsetsById  map[string]*Synset
 	lexicalsById map[string]*LexicalEntry
+	senseById    map[string]*Sense
 }
 
 type POS string
@@ -99,7 +94,7 @@ const (
 	VerbPos               POS = "v"
 	AdjectivePos          POS = "a"
 	AdverbPos             POS = "r"
-	AdjectiveSattelitePos POS = "s"
+	AdjectiveSatellitePos POS = "s"
 )
 
 func (resource *LexicalResource) SynsetsById() map[string]*Synset {
@@ -125,6 +120,21 @@ func (resource *LexicalResource) LexicalsById() map[string]*LexicalEntry {
 	}
 
 	return resource.lexicalsById
+}
+
+func (resource *LexicalResource) SenseById() map[string]*Sense {
+	if len(resource.lexicalsById) > 0 {
+		return resource.senseById
+	}
+
+	resource.senseById = make(map[string]*Sense)
+	for _, lexicalEntry := range resource.Lexicon.LexicalEntries {
+		for _, sense := range lexicalEntry.Senses {
+			resource.senseById[sense.ID] = &sense
+		}
+	}
+
+	return resource.senseById
 }
 
 func (resource *LexicalResource) groupEntryByPos(pos POS) (
