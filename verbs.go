@@ -24,18 +24,53 @@ type Verb LexicalEntry
 type Verbs LexicalEntries
 
 func (resource *LexicalResource) Verbs() (verbs Verbs) {
-	lexicalEntries, _ := resource.filterByPos(NounPos)
-	verbs = Verbs(lexicalEntries)
+	entries := Verbs(
+		LexicalEntries(resource.Lexicon.LexicalEntries).
+			filterByPos(VerbPos),
+	)
 
-	return
+	return entries
 }
 
 func (verbs Verbs) filteredByLexFile(kind VerbKind) (
 	filteredVerbs Verbs,
 ) {
-	lexicalEntries := verbs.filteredByLexFile(kind)
+	lexicalEntries := verbs.LexicalEntries().
+		filterByLexFile(string(kind))
 	filteredVerbs = Verbs(lexicalEntries)
 	return
+}
+
+func (verbs Verbs) LexicalEntries() LexicalEntries {
+	return LexicalEntries(verbs)
+}
+
+func (verb Verb) LexicalEntry() LexicalEntry {
+	return LexicalEntry(verb)
+}
+
+func (verb Verb) String() string {
+	return verb.Lemma.WrittenForm
+}
+
+func (verbs Verbs) AllKind() map[VerbKind]Verbs {
+	return map[VerbKind]Verbs{
+		VerbBody:          verbs.Body(),
+		VerbChange:        verbs.Change(),
+		VerbCognition:     verbs.Cognition(),
+		VerbCommunication: verbs.Communication(),
+		VerbCompetition:   verbs.Competition(),
+		VerbConsumption:   verbs.Consumption(),
+		VerbContact:       verbs.Contact(),
+		VerbCreation:      verbs.Creation(),
+		VerbEmotion:       verbs.Emotion(),
+		VerbMotion:        verbs.Motion(),
+		VerbPerception:    verbs.Perception(),
+		VerbPossession:    verbs.Possession(),
+		VerbSocial:        verbs.Social(),
+		VerbStative:       verbs.Stative(),
+		VerbWeather:       verbs.Weather(),
+	}
 }
 
 func (verbs Verbs) Body() Verbs {
