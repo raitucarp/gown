@@ -12,10 +12,12 @@ type Adjective LexicalEntry
 type Adjectives LexicalEntries
 
 func (resource *LexicalResource) Adjectives() (adjectives Adjectives) {
-	lexicalEntries, _ := resource.filterByPos(NounPos)
-	adjectives = Adjectives(lexicalEntries)
+	entries := Adjectives(
+		LexicalEntries(resource.Lexicon.LexicalEntries).
+			filterByPos(AdjectivePos, AdjectiveSatellitePos),
+	)
 
-	return
+	return entries
 }
 
 func (adjectives Adjectives) filteredByLexFile(kind AdjectiveKind) (
