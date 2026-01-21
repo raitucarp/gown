@@ -23,9 +23,30 @@ func (resource *LexicalResource) Adjectives() (adjectives Adjectives) {
 func (adjectives Adjectives) filteredByLexFile(kind AdjectiveKind) (
 	filteredAdjectives Adjectives,
 ) {
-	lexicalEntries := adjectives.filteredByLexFile(kind)
+	lexicalEntries := adjectives.LexicalEntries().
+		filterByLexFile(string(kind))
 	filteredAdjectives = Adjectives(lexicalEntries)
 	return
+}
+
+func (adjectives Adjectives) LexicalEntries() LexicalEntries {
+	return LexicalEntries(adjectives)
+}
+
+func (adjective Adjective) LexicalEntry() LexicalEntry {
+	return LexicalEntry(adjective)
+}
+
+func (adjective Adjective) String() string {
+	return adjective.Lemma.WrittenForm
+}
+
+func (adjectives Adjectives) AllKind() map[AdjectiveKind]Adjectives {
+	return map[AdjectiveKind]Adjectives{
+		AdjectiveAll:        adjectives.All(),
+		AdjectivePertainym:  adjectives.Pertainym(),
+		AdjectiveParticiple: adjectives.Participle(),
+	}
 }
 
 func (adjectives Adjectives) All() Adjectives {
