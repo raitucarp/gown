@@ -229,7 +229,7 @@ randomAdjectives := resource.Adjectives().Random(3)
 
 ## License
 
-gown is distributed under the Creative Commons Attribution 4.0 International License. The underlying WordNet data is derived from:
+gown is distributed under the MIT License. The underlying WordNet data is derived from:
 
 1. **Princeton WordNet** - Licensed under the WordNet License
 2. **Open English WordNet (OEWN)** - Licensed under the WordNet License
