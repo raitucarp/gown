@@ -234,7 +234,7 @@ gown is distributed under the MIT License. The underlying WordNet data is derive
 1. **Princeton WordNet** - Licensed under the WordNet License
 2. **Open English WordNet (OEWN)** - Licensed under the WordNet License
 
-Attribution must be given to both Princeton WordNet and the Open English WordNet team when using this library. See [LICENSE](LICENSE.md) for full details.
+Attribution must be given to both Princeton WordNet and the Open English WordNet team when using this library. See [LICENSE](LICENSE.md) and [ATTRIBUTION](ATTRIBUTION.md) for full details.
 
 ## Contributing
 
