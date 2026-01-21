@@ -113,7 +113,7 @@ func TestNounsRandom(t *testing.T) {
 
 }
 
-func TestWordsOrCollocations(t *testing.T) {
+func TestNounsWordsOrCollocations(t *testing.T) {
 	nouns := resource.Nouns()
 	animals := nouns.Animal().Words()
 
