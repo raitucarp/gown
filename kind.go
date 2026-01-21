@@ -4,12 +4,15 @@ import (
 	"slices"
 )
 
+// containSeparatedCollocation checks if a rune is a collocation separator.
 var collocationSeparator = []rune{' ', '-', '!', '/', '+', ':', ','}
 
+// containSeparatedCollocation returns true if the rune is a collocation separator.
 func containSeparatedCollocation(r rune) bool {
 	return slices.Contains(collocationSeparator, r)
 }
 
+// Words returns all entries that are single words (not collocations) from this resource.
 func (resource LexicalResource) Words() (entries LexicalEntries) {
 	for _, entry := range resource.Lexicon.LexicalEntries {
 		if entry.IsWord() {
@@ -19,6 +22,7 @@ func (resource LexicalResource) Words() (entries LexicalEntries) {
 	return
 }
 
+// Collocations returns all entries that are multi-word collocations from this resource.
 func (resource LexicalResource) Collocations() (entries LexicalEntries) {
 	for _, entry := range resource.Lexicon.LexicalEntries {
 		if entry.IsCollocation() {
@@ -28,6 +32,7 @@ func (resource LexicalResource) Collocations() (entries LexicalEntries) {
 	return
 }
 
+// Words returns all nouns that are single words (not collocations) from this collection.
 func (nouns Nouns) Words() (wordNouns Nouns) {
 	for _, noun := range nouns {
 		if noun.IsWord() {
@@ -37,6 +42,7 @@ func (nouns Nouns) Words() (wordNouns Nouns) {
 	return
 }
 
+// Collocations returns all nouns that are multi-word collocations from this collection.
 func (nouns Nouns) Collocations() (collocationNouns Nouns) {
 	for _, noun := range nouns {
 		if noun.IsCollocation() {
@@ -46,6 +52,7 @@ func (nouns Nouns) Collocations() (collocationNouns Nouns) {
 	return
 }
 
+// Words returns all verbs that are single words (not collocations) from this collection.
 func (verbs Verbs) Words() (wordVerbs Verbs) {
 	for _, verb := range verbs {
 		if verb.IsWord() {
@@ -55,6 +62,7 @@ func (verbs Verbs) Words() (wordVerbs Verbs) {
 	return
 }
 
+// Collocations returns all verbs that are multi-word collocations from this collection.
 func (verbs Verbs) Collocations() (collocationVerbs Verbs) {
 	for _, verb := range verbs {
 		if verb.IsCollocation() {
@@ -64,6 +72,7 @@ func (verbs Verbs) Collocations() (collocationVerbs Verbs) {
 	return
 }
 
+// Words returns all adverbs that are single words (not collocations) from this collection.
 func (adverbs Adverbs) Words() (wordAdverbs Adverbs) {
 	for _, adverb := range adverbs {
 		if adverb.IsWord() {
@@ -73,6 +82,7 @@ func (adverbs Adverbs) Words() (wordAdverbs Adverbs) {
 	return
 }
 
+// Collocations returns all adverbs that are multi-word collocations from this collection.
 func (adverbs Adverbs) Collocations() (collocationAdverbs Adverbs) {
 	for _, adverb := range adverbs {
 		if adverb.IsCollocation() {
@@ -82,6 +92,7 @@ func (adverbs Adverbs) Collocations() (collocationAdverbs Adverbs) {
 	return
 }
 
+// Words returns all adjectives that are single words (not collocations) from this collection.
 func (adjectives Adjectives) Words() (wordAdjectives Adjectives) {
 	for _, adjective := range adjectives {
 		if adjective.IsWord() {
@@ -91,6 +102,7 @@ func (adjectives Adjectives) Words() (wordAdjectives Adjectives) {
 	return
 }
 
+// Collocations returns all adjectives that are multi-word collocations from this collection.
 func (adjectives Adjectives) Collocations() (collocationAdjectives Adjectives) {
 	for _, adjective := range adjectives {
 		if adjective.IsCollocation() {

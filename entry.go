@@ -5,21 +5,32 @@ import (
 	"strings"
 )
 
+// Lemma represents the base form of a word with its part-of-speech and pronunciations.
 type Lemma struct {
-	PartOfSpeech   string          `xml:"partOfSpeech,attr"`
-	WrittenForm    string          `xml:"writtenForm,attr"`
+	// PartOfSpeech is the part of speech tag for this lemma.
+	PartOfSpeech string `xml:"partOfSpeech,attr"`
+	// WrittenForm is the lemma's textual representation.
+	WrittenForm string `xml:"writtenForm,attr"`
+	// Pronunciations contains all available pronunciations for this lemma.
 	Pronunciations []Pronunciation `xml:"Pronunciation"`
 }
 
+// LexicalEntry represents a word with its forms, lemma, and associated senses.
 type LexicalEntry struct {
-	ID     string  `xml:"id,attr"`
-	Forms  []Form  `xml:"Form"`
-	Lemma  Lemma   `xml:"Lemma"`
+	// ID uniquely identifies this lexical entry.
+	ID string `xml:"id,attr"`
+	// Forms contains alternative written forms of this entry.
+	Forms []Form `xml:"Form"`
+	// Lemma is the base form of this entry.
+	Lemma Lemma `xml:"Lemma"`
+	// Senses connects this lexical entry to one or more synsets, representing different meanings.
 	Senses []Sense `xml:"Sense"`
 
+	// resource is an internal reference to the containing LexicalResource.
 	resource *LexicalResource
 }
 
+// LexicalEntries represents a collection of lexical entries.
 type LexicalEntries []LexicalEntry
 
 func (entries LexicalEntries) filterByPos(pos ...POS) (filteredEntries LexicalEntries) {
@@ -43,34 +54,41 @@ func (entries LexicalEntries) filterByLexFile(lexFile string) (filteredEntries L
 	return
 }
 
+// Nouns returns a Nouns collection filtered from this LexicalEntries by part of speech.
 func (entries LexicalEntries) Nouns() Nouns {
 	lexicalEntries := entries.filterByPos(NounPos)
 	return Nouns(lexicalEntries)
 }
 
+// Verbs returns a Verbs collection filtered from this LexicalEntries by part of speech.
 func (entries LexicalEntries) Verbs() Verbs {
 	lexicalEntries := entries.filterByPos(VerbPos)
 	return Verbs(lexicalEntries)
 }
 
+// Adjectives returns an Adjectives collection filtered from this LexicalEntries by part of speech.
 func (entries LexicalEntries) Adjectives() Adjectives {
 	lexicalEntries := entries.filterByPos(AdjectivePos, AdjectiveSatellitePos)
 	return Adjectives(lexicalEntries)
 }
 
+// Adverbs returns an Adverbs collection filtered from this LexicalEntries by part of speech.
 func (entries LexicalEntries) Adverbs() Adverbs {
 	lexicalEntries := entries.filterByPos(AdverbPos)
 	return Adverbs(lexicalEntries)
 }
 
+// PartOfSpeech returns the part of speech for this lexical entry.
 func (entry *LexicalEntry) PartOfSpeech() POS {
 	return POS(entry.Lemma.PartOfSpeech)
 }
 
+// String returns the written form of this lexical entry.
 func (entry *LexicalEntry) String() string {
 	return entry.Lemma.WrittenForm
 }
 
+// Synsets returns all synsets for this lexical entry across all of its senses.
 func (entry *LexicalEntry) Synsets() (synsets []*Synset) {
 	for _, sense := range entry.Senses {
 		synsets = append(synsets, sense.GetSynset())
@@ -136,14 +154,17 @@ func (entry *LexicalEntry) filterBySynsetRelation(relTyppe SynsetRelationType) (
 	return
 }
 
+// Relation returns a LexicalRelation object for finding related words to this entry.
 func (entry *LexicalEntry) Relation() *LexicalRelation {
 	return &LexicalRelation{entry: entry}
 }
 
+// StartsWith returns true if this entry's written form starts with the given string.
 func (entry *LexicalEntry) StartsWith(s string) bool {
 	return strings.HasPrefix(entry.Lemma.WrittenForm, s)
 }
 
+// EndsWith returns true if this entry's written form ends with the given string.
 func (entry *LexicalEntry) EndsWith(s string) bool {
 	return strings.HasSuffix(entry.Lemma.WrittenForm, s)
 }

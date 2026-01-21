@@ -1,39 +1,70 @@
 package gown
 
+// NounKind represents a semantic category of nouns based on WordNet's lexfile classification.
 type NounKind string
 
 const (
-	NounTops          NounKind = "noun.Tops"
-	NounAct           NounKind = "noun.act"
-	NounAnimal        NounKind = "noun.animal"
-	NounArtifact      NounKind = "noun.artifact"
-	NounAttribute     NounKind = "noun.attribute"
-	NounBody          NounKind = "noun.body"
-	NounCognition     NounKind = "noun.cognition"
+	// NounTops is the semantic category for top-level nouns.
+	NounTops NounKind = "noun.Tops"
+	// NounAct is the semantic category for nouns representing acts and actions.
+	NounAct NounKind = "noun.act"
+	// NounAnimal is the semantic category for animal nouns.
+	NounAnimal NounKind = "noun.animal"
+	// NounArtifact is the semantic category for man-made objects.
+	NounArtifact NounKind = "noun.artifact"
+	// NounAttribute is the semantic category for attribute nouns.
+	NounAttribute NounKind = "noun.attribute"
+	// NounBody is the semantic category for body parts.
+	NounBody NounKind = "noun.body"
+	// NounCognition is the semantic category for cognition-related nouns.
+	NounCognition NounKind = "noun.cognition"
+	// NounCommunication is the semantic category for communication nouns.
 	NounCommunication NounKind = "noun.communication"
-	NounEvent         NounKind = "noun.event"
-	NounFeeling       NounKind = "noun.feeling"
-	NounFood          NounKind = "noun.food"
-	NounGroup         NounKind = "noun.group"
-	NounLocation      NounKind = "noun.location"
-	NounMotive        NounKind = "noun.motive"
-	NounObject        NounKind = "noun.object"
-	NounPerson        NounKind = "noun.person"
-	NounPhenomenon    NounKind = "noun.phenomenon"
-	NounPlant         NounKind = "noun.plant"
-	NounPossession    NounKind = "noun.possession"
-	NounProcess       NounKind = "noun.process"
-	NounQuantity      NounKind = "noun.quantity"
-	NounRelation      NounKind = "noun.relation"
-	NounShape         NounKind = "noun.shape"
-	NounState         NounKind = "noun.state"
-	NounSubstance     NounKind = "noun.substance"
-	NounTime          NounKind = "noun.time"
+	// NounEvent is the semantic category for event nouns.
+	NounEvent NounKind = "noun.event"
+	// NounFeeling is the semantic category for emotion and feeling nouns.
+	NounFeeling NounKind = "noun.feeling"
+	// NounFood is the semantic category for food nouns.
+	NounFood NounKind = "noun.food"
+	// NounGroup is the semantic category for group and collective nouns.
+	NounGroup NounKind = "noun.group"
+	// NounLocation is the semantic category for location nouns.
+	NounLocation NounKind = "noun.location"
+	// NounMotive is the semantic category for motive nouns.
+	NounMotive NounKind = "noun.motive"
+	// NounObject is the semantic category for physical object nouns.
+	NounObject NounKind = "noun.object"
+	// NounPerson is the semantic category for person nouns.
+	NounPerson NounKind = "noun.person"
+	// NounPhenomenon is the semantic category for phenomenon nouns.
+	NounPhenomenon NounKind = "noun.phenomenon"
+	// NounPlant is the semantic category for plant nouns.
+	NounPlant NounKind = "noun.plant"
+	// NounPossession is the semantic category for possession nouns.
+	NounPossession NounKind = "noun.possession"
+	// NounProcess is the semantic category for process nouns.
+	NounProcess NounKind = "noun.process"
+	// NounQuantity is the semantic category for quantity nouns.
+	NounQuantity NounKind = "noun.quantity"
+	// NounRelation is the semantic category for relation nouns.
+	NounRelation NounKind = "noun.relation"
+	// NounShape is the semantic category for shape nouns.
+	NounShape NounKind = "noun.shape"
+	// NounState is the semantic category for state nouns.
+	NounState NounKind = "noun.state"
+	// NounSubstance is the semantic category for substance nouns.
+	NounSubstance NounKind = "noun.substance"
+	// NounTime is the semantic category for time nouns.
+	NounTime NounKind = "noun.time"
 )
 
+// Noun represents a single noun lexical entry.
 type Noun LexicalEntry
+
+// Nouns represents a collection of nouns.
 type Nouns LexicalEntries
 
+// Nouns returns all nouns from this lexical resource.
 func (resource *LexicalResource) Nouns() (nouns Nouns) {
 	entries := Nouns(
 		LexicalEntries(resource.Lexicon.LexicalEntries).
@@ -52,18 +83,22 @@ func (nouns Nouns) filterByLexFile(kind NounKind) (
 	return
 }
 
+// LexicalEntries converts this Nouns collection to a LexicalEntries collection.
 func (nouns Nouns) LexicalEntries() LexicalEntries {
 	return LexicalEntries(nouns)
 }
 
+// LexicalEntry converts this Noun to a LexicalEntry.
 func (noun Noun) LexicalEntry() LexicalEntry {
 	return LexicalEntry(noun)
 }
 
+// String returns the written form of this noun.
 func (noun Noun) String() string {
 	return noun.Lemma.WrittenForm
 }
 
+// AllKind returns a map of all noun kinds with their corresponding noun collections.
 func (nouns Nouns) AllKind() map[NounKind]Nouns {
 	return map[NounKind]Nouns{
 		NounTops:          nouns.Tops(),

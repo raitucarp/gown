@@ -1,28 +1,48 @@
 package gown
 
+// VerbKind represents a semantic category of verbs based on WordNet's lexfile classification.
 type VerbKind string
 
 const (
-	VerbBody          VerbKind = "verb.body"
-	VerbChange        VerbKind = "verb.change"
-	VerbCognition     VerbKind = "verb.cognition"
+	// VerbBody is the semantic category for body-related verbs.
+	VerbBody VerbKind = "verb.body"
+	// VerbChange is the semantic category for change verbs.
+	VerbChange VerbKind = "verb.change"
+	// VerbCognition is the semantic category for cognition verbs.
+	VerbCognition VerbKind = "verb.cognition"
+	// VerbCommunication is the semantic category for communication verbs.
 	VerbCommunication VerbKind = "verb.communication"
-	VerbCompetition   VerbKind = "verb.competition"
-	VerbConsumption   VerbKind = "verb.consumption"
-	VerbContact       VerbKind = "verb.contact"
-	VerbCreation      VerbKind = "verb.creation"
-	VerbEmotion       VerbKind = "verb.emotion"
-	VerbMotion        VerbKind = "verb.motion"
-	VerbPerception    VerbKind = "verb.perception"
-	VerbPossession    VerbKind = "verb.possession"
-	VerbSocial        VerbKind = "verb.social"
-	VerbStative       VerbKind = "verb.stative"
-	VerbWeather       VerbKind = "verb.weather"
+	// VerbCompetition is the semantic category for competition verbs.
+	VerbCompetition VerbKind = "verb.competition"
+	// VerbConsumption is the semantic category for consumption verbs.
+	VerbConsumption VerbKind = "verb.consumption"
+	// VerbContact is the semantic category for contact verbs.
+	VerbContact VerbKind = "verb.contact"
+	// VerbCreation is the semantic category for creation verbs.
+	VerbCreation VerbKind = "verb.creation"
+	// VerbEmotion is the semantic category for emotion verbs.
+	VerbEmotion VerbKind = "verb.emotion"
+	// VerbMotion is the semantic category for motion verbs.
+	VerbMotion VerbKind = "verb.motion"
+	// VerbPerception is the semantic category for perception verbs.
+	VerbPerception VerbKind = "verb.perception"
+	// VerbPossession is the semantic category for possession verbs.
+	VerbPossession VerbKind = "verb.possession"
+	// VerbSocial is the semantic category for social verbs.
+	VerbSocial VerbKind = "verb.social"
+	// VerbStative is the semantic category for stative verbs.
+	VerbStative VerbKind = "verb.stative"
+	// VerbWeather is the semantic category for weather verbs.
+	VerbWeather VerbKind = "verb.weather"
 )
 
+// Verb represents a single verb lexical entry.
 type Verb LexicalEntry
+
+// Verbs represents a collection of verbs.
 type Verbs LexicalEntries
 
+// Verbs returns all verbs from this lexical resource.
 func (resource *LexicalResource) Verbs() (verbs Verbs) {
 	entries := Verbs(
 		LexicalEntries(resource.Lexicon.LexicalEntries).
@@ -41,18 +61,22 @@ func (verbs Verbs) filteredByLexFile(kind VerbKind) (
 	return
 }
 
+// LexicalEntries converts this Verbs collection to a LexicalEntries collection.
 func (verbs Verbs) LexicalEntries() LexicalEntries {
 	return LexicalEntries(verbs)
 }
 
+// LexicalEntry converts this Verb to a LexicalEntry.
 func (verb Verb) LexicalEntry() LexicalEntry {
 	return LexicalEntry(verb)
 }
 
+// String returns the written form of this verb.
 func (verb Verb) String() string {
 	return verb.Lemma.WrittenForm
 }
 
+// AllKind returns a map of all verb kinds with their corresponding verb collections.
 func (verbs Verbs) AllKind() map[VerbKind]Verbs {
 	return map[VerbKind]Verbs{
 		VerbBody:          verbs.Body(),

@@ -38,6 +38,9 @@ func registerTypes() {
 	gob.Register([]SyntacticBehaviour{})
 }
 
+// ReadLexicalResource loads the embedded Open English WordNet (OEWN) lexical database
+// from the compressed GOB file and initializes all internal mappings and references.
+// It returns a pointer to the LexicalResource or an error if decoding fails.
 func ReadLexicalResource() (resource *LexicalResource, err error) {
 	oewnReader := bytes.NewReader(oewn)
 
