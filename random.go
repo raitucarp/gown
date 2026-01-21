@@ -23,3 +23,13 @@ func (verbs Verbs) Random(n int) Verbs {
 	shuffled := lo.Samples(verbs, n)
 	return shuffled
 }
+
+func (adjectives Adjectives) Random(n int) Adjectives {
+	shuffled := lo.Samples(adjectives, n)
+	return shuffled
+}
+
+func (adverbs Adverbs) Random(n int) Adverbs {
+	shuffled := lo.Samples(adverbs, n)
+	return shuffled
+}
