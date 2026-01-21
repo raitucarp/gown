@@ -1,22 +1,42 @@
-SPDX-License-Identifier: CC-BY-4.0
+SPDX-License-Identifier: MIT
 
-This resource is derived from Princeton WordNet under the WordNet License and further developed under the Creative Commons Attribution 4.0 International License.
+MIT License
 
-You may share and adapt this resource providing attribution is given to both Princeton WordNet and the Open English Wordnet team.
+Copyright (c) 2026 raitucarp
 
-WordNet License Attribution
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-This work is based on or incorporates elements of the Princeton
-University WordNet database.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-The original Princeton WordNet license terms apply to the underlying
-data and can be found in the file: /WNDB_License.txt (located in the
-root directory of this distribution).
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-# Open English WordNet License Attribution
+---
 
-This work is based on or incorporates elements of the Open English WordNet database.
+ATTRIBUTION NOTICE
 
-The original Open English WordNet license terms apply to the underlying
-data and can be found in the file: /OEWN_License.txt (located in the
-root directory of this distribution).
+This software incorporates data from:
+
+1. Princeton WordNet - Licensed under the WordNet License
+   The original Princeton WordNet license terms apply to the underlying
+   data and can be found in the file: /WNDB_License.txt (located in the
+   root directory of this distribution).
+
+2. Open English WordNet (OEWN) - Licensed under the WordNet License
+   The original Open English WordNet license terms apply to the underlying
+   data and can be found in the file: /OEWN_License.txt (located in the
+   root directory of this distribution).
+
+Attribution must be given to both Princeton WordNet and the Open English WordNet team
+when using this library.
