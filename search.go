@@ -43,3 +43,39 @@ func (nouns Nouns) SearchLemmaByDefinition(query string) (filteredNouns Nouns) {
 
 	return Nouns(lexicalEntries.SearchLemmaByDefinition(query))
 }
+
+func (verbs Verbs) SearchLemma(query string) (filteredVerbs Verbs) {
+	lexicalEntries := LexicalEntries(verbs)
+
+	return Verbs(lexicalEntries.SearchLemma(query))
+}
+
+func (verbs Verbs) SearchLemmaByDefinition(query string) (filteredVerbs Verbs) {
+	lexicalEntries := LexicalEntries(verbs)
+
+	return Verbs(lexicalEntries.SearchLemmaByDefinition(query))
+}
+
+func (adverbs Adverbs) SearchLemma(query string) (filteredAdverbs Adverbs) {
+	lexicalEntries := LexicalEntries(adverbs)
+
+	return Adverbs(lexicalEntries.SearchLemma(query))
+}
+
+func (adverbs Adverbs) SearchLemmaByDefinition(query string) (filteredAdverbs Adverbs) {
+	lexicalEntries := LexicalEntries(adverbs)
+
+	return Adverbs(lexicalEntries.SearchLemmaByDefinition(query))
+}
+
+func (adjectives Adjectives) SearchLemma(query string) (filteredAdjectives Adjectives) {
+	lexicalEntries := LexicalEntries(adjectives)
+
+	return Adjectives(lexicalEntries.SearchLemma(query))
+}
+
+func (adjectives Adjectives) SearchLemmaByDefinition(query string) (filteredAdjectives Adjectives) {
+	lexicalEntries := LexicalEntries(adjectives)
+
+	return Adjectives(lexicalEntries.SearchLemmaByDefinition(query))
+}
