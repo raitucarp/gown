@@ -234,7 +234,7 @@ gown is distributed under the Creative Commons Attribution 4.0 International Lic
 1. **Princeton WordNet** - Licensed under the WordNet License
 2. **Open English WordNet (OEWN)** - Licensed under the WordNet License
 
-Attribution must be given to both Princeton WordNet and the Open English WordNet team when using this library. See [LICENSE.md](LICENSE.md) for full details.
+Attribution must be given to both Princeton WordNet and the Open English WordNet team when using this library. See [LICENSE](LICENSE) for full details.
 
 ## Contributing
 
