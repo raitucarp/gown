@@ -191,7 +191,7 @@ func (resource *LexicalResource) SenseById() map[string]*Sense {
 	return resource.senseById
 }
 
-func (resource *LexicalResource) groupEntryByPos(pos POS) (
+func (resource *LexicalResource) GroupEntryByPos(pos POS) (
 	entries []LexicalEntry,
 ) {
 	return lo.GroupBy(resource.Lexicon.LexicalEntries,
@@ -200,7 +200,7 @@ func (resource *LexicalResource) groupEntryByPos(pos POS) (
 		})[string(pos)]
 }
 
-func (resource *LexicalResource) groupSynsetsByPos(pos POS) (
+func (resource *LexicalResource) GroupSynsetsByPos(pos POS) (
 	entries []Synset,
 ) {
 	return lo.GroupBy(resource.Lexicon.Synsets,
@@ -209,7 +209,7 @@ func (resource *LexicalResource) groupSynsetsByPos(pos POS) (
 		})[string(pos)]
 }
 
-func (resource *LexicalResource) synsetsBySense(senses []Sense) []*Synset {
+func (resource *LexicalResource) SynsetsBySense(senses []Sense) []*Synset {
 	synsetsById := resource.SynsetsById()
 	return lo.Map(senses, func(sense Sense, i int) *Synset {
 		return synsetsById[sense.Synset]
