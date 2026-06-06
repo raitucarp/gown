@@ -34,11 +34,18 @@ type LexicalEntry struct {
 type LexicalEntries []LexicalEntry
 
 func (entries LexicalEntries) filterByPos(pos ...POS) (filteredEntries LexicalEntries) {
+	if len(pos) == 0 {
+		return
+	}
+
+	posMap := make(map[POS]struct{}, len(pos))
+	for _, p := range pos {
+		posMap[p] = struct{}{}
+	}
+
 	for _, entry := range entries {
-		for _, _pos := range pos {
-			if entry.PartOfSpeech() == _pos {
-				filteredEntries = append(filteredEntries, entry)
-			}
+		if _, ok := posMap[entry.PartOfSpeech()]; ok {
+			filteredEntries = append(filteredEntries, entry)
 		}
 	}
 	return
