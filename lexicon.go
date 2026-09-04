@@ -3,6 +3,7 @@ package gown
 import (
 	"encoding/xml"
 	"strings"
+	"sync"
 
 	"github.com/samber/lo"
 )
@@ -130,6 +131,18 @@ type LexicalResource struct {
 	lexicalsById map[string]*LexicalEntry
 	// senseById is an internal cache mapping sense IDs to their objects.
 	senseById map[string]*Sense
+	// entriesByLemmaLower maps lowercased lemma written form to lexical entries.
+	entriesByLemmaLower map[string][]*LexicalEntry
+	// entriesByLemmaExact maps exact case lemma written form to lexical entries.
+	entriesByLemmaExact map[string][]*LexicalEntry
+	// synsetsByILI maps Interlingual Index (ILI) to synsets.
+	synsetsByILI map[string]*Synset
+	// entriesByPos caches lexical entries grouped by POS.
+	entriesByPos map[POS][]*LexicalEntry
+	// synsetsByPos caches synsets grouped by POS.
+	synsetsByPos map[POS][]*Synset
+	// mu guards initialization of cached indexes.
+	mu sync.RWMutex
 }
 
 // POS represents a Part of Speech tag.
@@ -148,46 +161,103 @@ const (
 	AdjectiveSatellitePos POS = "s"
 )
 
-// SynsetsById returns a cached map of all synsets indexed by their IDs.
-func (resource *LexicalResource) SynsetsById() map[string]*Synset {
-	if len(resource.synsetsById) > 0 {
-		return resource.synsetsById
+// InitIndices builds all internal lookup indexes for fast O(1) access.
+func (resource *LexicalResource) InitIndices() {
+	resource.mu.Lock()
+	defer resource.mu.Unlock()
+	resource.initIndicesLocked()
+}
+
+func (resource *LexicalResource) initIndicesLocked() {
+	if resource.synsetsById != nil {
+		return
 	}
 
-	resource.synsetsById = make(map[string]*Synset)
-	for _, synset := range resource.Lexicon.Synsets {
-		resource.synsetsById[synset.ID] = &synset
+	resource.synsetsById = make(map[string]*Synset, len(resource.Lexicon.Synsets))
+	resource.synsetsByILI = make(map[string]*Synset, len(resource.Lexicon.Synsets))
+	resource.synsetsByPos = make(map[POS][]*Synset)
+
+	for i := range resource.Lexicon.Synsets {
+		s := &resource.Lexicon.Synsets[i]
+		resource.synsetsById[s.ID] = s
+		if s.Ili != "" {
+			resource.synsetsByILI[s.Ili] = s
+		}
+		p := POS(s.PartOfSpeech)
+		resource.synsetsByPos[p] = append(resource.synsetsByPos[p], s)
 	}
+
+	numEntries := len(resource.Lexicon.LexicalEntries)
+	resource.lexicalsById = make(map[string]*LexicalEntry, numEntries)
+	resource.senseById = make(map[string]*Sense, numEntries*2)
+	resource.entriesByLemmaLower = make(map[string][]*LexicalEntry, numEntries)
+	resource.entriesByLemmaExact = make(map[string][]*LexicalEntry, numEntries)
+	resource.entriesByPos = make(map[POS][]*LexicalEntry)
+
+	for i := range resource.Lexicon.LexicalEntries {
+		entry := &resource.Lexicon.LexicalEntries[i]
+		entry.resource = resource
+		resource.lexicalsById[entry.ID] = entry
+
+		wExact := entry.Lemma.WrittenForm
+		wLower := strings.ToLower(wExact)
+		resource.entriesByLemmaExact[wExact] = append(resource.entriesByLemmaExact[wExact], entry)
+		resource.entriesByLemmaLower[wLower] = append(resource.entriesByLemmaLower[wLower], entry)
+
+		p := POS(entry.Lemma.PartOfSpeech)
+		resource.entriesByPos[p] = append(resource.entriesByPos[p], entry)
+
+		for j := range entry.Senses {
+			sense := &entry.Senses[j]
+			sense.resource = resource
+			sense.lexicalEntry = entry
+			resource.senseById[sense.ID] = sense
+		}
+	}
+}
+
+// SynsetsById returns a cached map of all synsets indexed by their IDs.
+func (resource *LexicalResource) SynsetsById() map[string]*Synset {
+	resource.mu.RLock()
+	if resource.synsetsById != nil {
+		defer resource.mu.RUnlock()
+		return resource.synsetsById
+	}
+	resource.mu.RUnlock()
+
+	resource.mu.Lock()
+	defer resource.mu.Unlock()
+	resource.initIndicesLocked()
 	return resource.synsetsById
 }
 
 // LexicalsById returns a cached map of all lexical entries indexed by their IDs.
 func (resource *LexicalResource) LexicalsById() map[string]*LexicalEntry {
-	if len(resource.lexicalsById) > 0 {
+	resource.mu.RLock()
+	if resource.lexicalsById != nil {
+		defer resource.mu.RUnlock()
 		return resource.lexicalsById
 	}
+	resource.mu.RUnlock()
 
-	resource.lexicalsById = make(map[string]*LexicalEntry)
-	for _, lexicalEntry := range resource.Lexicon.LexicalEntries {
-		resource.lexicalsById[lexicalEntry.ID] = &lexicalEntry
-	}
-
+	resource.mu.Lock()
+	defer resource.mu.Unlock()
+	resource.initIndicesLocked()
 	return resource.lexicalsById
 }
 
 // SenseById returns a cached map of all senses indexed by their IDs.
 func (resource *LexicalResource) SenseById() map[string]*Sense {
-	if len(resource.lexicalsById) > 0 {
+	resource.mu.RLock()
+	if resource.senseById != nil {
+		defer resource.mu.RUnlock()
 		return resource.senseById
 	}
+	resource.mu.RUnlock()
 
-	resource.senseById = make(map[string]*Sense)
-	for _, lexicalEntry := range resource.Lexicon.LexicalEntries {
-		for _, sense := range lexicalEntry.Senses {
-			resource.senseById[sense.ID] = &sense
-		}
-	}
-
+	resource.mu.Lock()
+	defer resource.mu.Unlock()
+	resource.initIndicesLocked()
 	return resource.senseById
 }
 

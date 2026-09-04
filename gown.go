@@ -70,9 +70,10 @@ func ReadLexicalResource() (resource *LexicalResource, err error) {
 				LexicalEntries[index].
 				Senses[senseIndex].lexicalEntry = &resource.Lexicon.
 				LexicalEntries[index]
-
 		}
 	}
+
+	resource.InitIndices()
 
 	return
 }
